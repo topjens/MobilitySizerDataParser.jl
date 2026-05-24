@@ -1,0 +1,13 @@
+name = "MobilitySizerDataParser"
+uuid = "1851b1bf-efbb-4c2d-ae3d-0e57a57da449"
+authors = ["Jens Top"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.10.10"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

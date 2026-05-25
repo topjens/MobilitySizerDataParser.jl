@@ -36,7 +36,7 @@ jobs:
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
-      - uses: julia-actions/cache@v2
+      - uses: julia-actions/cache@v3
       - name: Install dependencies
         run: julia --project=. -e 'using Pkg; Pkg.add(url="https://github.com/topjens/DifferentialMobilityAnalyzers.jl", rev="master"); Pkg.precompile()'
       - uses: julia-actions/julia-buildpkg@v1

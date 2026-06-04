@@ -86,7 +86,7 @@ function parse_file(path::AbstractString)
         # 𝕟ⁱⁿᵛ = rinv(𝕣.N, δ, λ₁=0.1, λ₂=1.0)
         𝕟ⁱⁿᵛ² = rinv2(𝕣.N, δ, λ₁=0.1, λ₂=1.0)
 
-        experiment[!, 𝕟ⁱⁿᵛ²] = 𝕟ⁱⁿᵛ²
+        experiment[!, :𝕟ⁱⁿᵛ²] = 𝕟ⁱⁿᵛ²
 
         # p1 = scatter(experiment[!,:Dp], experiment[!,:Rcn],
         #              xscale = :log10,

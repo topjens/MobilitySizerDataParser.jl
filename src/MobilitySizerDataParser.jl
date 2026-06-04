@@ -4,6 +4,9 @@ using DataFrames
 using Dates
 using Plots
 using DifferentialMobilityAnalyzers
+using CSV
+
+export parse_file
 
 function parse_file(path::AbstractString)
     outdir = dirname(path)
@@ -31,8 +34,8 @@ function parse_file(path::AbstractString)
         length(vals) == 15 || error("Expected 15 values at line $i")
 
         qsh = parse(Float64, vals[1]) / 60. / 1000.
-            qsa = parse(Float64, vals[2]) / 60. / 1000.
-            r₁ = parse(Float64, vals[3])
+        qsa = parse(Float64, vals[2]) / 60. / 1000.
+        r₁ = parse(Float64, vals[3])
         r₂ = parse(Float64, vals[4])
         l = parse(Float64, vals[5])
         # 6
@@ -47,7 +50,7 @@ function parse_file(path::AbstractString)
         DMAtype = :cylindrical
         polarity = :+
 
-            Λ = DMAconfig(t, p, qsa, qsh, r₁, r₂, l, leff, polarity, m, DMAtype)
+        Λ = DMAconfig(t, p, qsa, qsh, r₁, r₂, l, leff, polarity, m, DMAtype)
 
         i += 1
 
@@ -80,34 +83,37 @@ function parse_file(path::AbstractString)
         δ = setupSMPSdata(Λ, experiment[!,:V])
 
         𝕣 = (experiment,:Dp,:Rcn,δ) |> interpolateDataFrameOntoδ
-        𝕟ⁱⁿᵛ = rinv(𝕣.N, δ, λ₁=0.1, λ₂=1.0)
+        # 𝕟ⁱⁿᵛ = rinv(𝕣.N, δ, λ₁=0.1, λ₂=1.0)
         𝕟ⁱⁿᵛ² = rinv2(𝕣.N, δ, λ₁=0.1, λ₂=1.0)
 
-        p1 = scatter(experiment[!,:Dp], experiment[!,:Rcn],
-                     xscale = :log10,
-                     xlabel = "D_p [nm]",
-                     ylabel = "raw number [-]",
-                     title = "Raw number of particles",
-                     legend = false)
+        experiment[!, 𝕟ⁱⁿᵛ²] = 𝕟ⁱⁿᵛ²
 
-        p2 = scatter(𝕟ⁱⁿᵛ.Dp, 𝕟ⁱⁿᵛ.N,
-                     xscale = :log10,
-                     xlabel = "D_p [nm]",
-                     ylabel = "dN/dlogD_p [cm-3]",
-                     title = "Inversed number distribution",
-                     legend = false)
+        # p1 = scatter(experiment[!,:Dp], experiment[!,:Rcn],
+        #              xscale = :log10,
+        #              xlabel = "D_p [nm]",
+        #              ylabel = "raw number [-]",
+        #              title = "Raw number of particles",
+        #              legend = false)
 
-        p3 = scatter(𝕟ⁱⁿᵛ².Dp, 𝕟ⁱⁿᵛ².N,
-                     xscale = :log10,
-                     xlabel = "D_p [nm]",
-                     ylabel = "dN/dlogD_p [cm-3]",
-                     title = "Inversed number distribution 2",
-                     legend = false)
+        # p2 = scatter(𝕟ⁱⁿᵛ.Dp, 𝕟ⁱⁿᵛ.N,
+        #              xscale = :log10,
+        #              xlabel = "D_p [nm]",
+        #              ylabel = "dN/dlogD_p [cm-3]",
+        #              title = "Inversed number distribution",
+        #              legend = false)
 
-        # Arrange side-by-side
-        p = plot(p1, p2, p3, layout = (1, 3), size=(1200, 400),  display=false);
+        # p3 = scatter(𝕟ⁱⁿᵛ².Dp, 𝕟ⁱⁿᵛ².N,
+        #              xscale = :log10,
+        #              xlabel = "D_p [nm]",
+        #              ylabel = "dN/dlogD_p [cm-3]",
+        #              title = "Inversed number distribution 2",
+        #              legend = false)
 
-        savefig(p, joinpath(outdir, "plot_$(block_id).png"))
+        # # Arrange side-by-side
+        # p = plot(p1, p2, p3, layout = (1, 3), size=(1200, 400),  display=false);
+
+        # savefig(p, joinpath(outdir, "plot_$(block_id).png"))
+        CSV.write(experiment, joinpath(outdir, "inverted_$(block_id).csv"))
     end
 end
 

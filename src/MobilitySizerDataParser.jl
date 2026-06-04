@@ -86,8 +86,7 @@ function parse_file(path::AbstractString)
         # 𝕟ⁱⁿᵛ = rinv(𝕣.N, δ, λ₁=0.1, λ₂=1.0)
         𝕟ⁱⁿᵛ² = rinv2(𝕣.N, δ, λ₁=0.1, λ₂=1.0)
 
-        experiment[!, :Dp_inv] = 𝕟ⁱⁿᵛ².Dp
-        experiment[!, :𝕟ⁱⁿᵛ²] = 𝕟ⁱⁿᵛ².N
+        inverted = DataFrame(Dp_inv=𝕟ⁱⁿᵛ².Dp, N=𝕟ⁱⁿᵛ².N)
 
         # p1 = scatter(experiment[!,:Dp], experiment[!,:Rcn],
         #              xscale = :log10,
@@ -114,7 +113,8 @@ function parse_file(path::AbstractString)
         # p = plot(p1, p2, p3, layout = (1, 3), size=(1200, 400),  display=false);
 
         # savefig(p, joinpath(outdir, "plot_$(block_id).png"))
-        CSV.write(experiment, joinpath(outdir, "inverted_$(block_id).csv"))
+        CSV.write(experiment, joinpath(outdir, "raw_$(block_id).csv"))
+        CSV.write(inverted, joinpath(outdir, "inverted_$(block_id).csv"))
     end
 end
 

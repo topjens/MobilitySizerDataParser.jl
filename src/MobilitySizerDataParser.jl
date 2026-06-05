@@ -45,7 +45,7 @@ function parse_file(path::AbstractString)
         t = parse(Float64, vals[10]) + 273.15
         
         
-        leff = 13.0
+        leff = 0.0
         m = 6
         DMAtype = :cylindrical
         polarity = :+

@@ -42,7 +42,7 @@ function parse_file(path::AbstractString)
         # 7
         p = parse(Float64, vals[8]) * 100.0
         # 9
-        t = parse(Float64, vals[10])
+        t = parse(Float64, vals[10]) + 273.15
         
         
         leff = 13.0

@@ -196,13 +196,10 @@ function process_file(path::AbstractString)
         experiment[!,:Dp] = ztod(Λ, 1, vtoz(Λ, experiment[!,:V]))
         δ = setupSMPSdata(Λ, experiment[!,:V])
 
-        𝕣 = (experiment,:Dp,:Rcn,δ) |> interpolateDataFrameOntoδ
-        # 𝕟ⁱⁿᵛ = rinv(𝕣.N, δ, λ₁=0.1, λ₂=1.0)
-        𝕟ⁱⁿᵛ² = rinv2(𝕣.N, δ, λ₁=0.1, λ₂=1.0)
+        w = (experiment,:Dp,:Rcn,δ) |> interpolateDataFrameOntoδ
+        x = rinv2(𝕣.N, δ, λ₁=0.1, λ₂=1.0)
 
-        inverted = DataFrame(Dp_inv=𝕟ⁱⁿᵛ².Dp, N=𝕟ⁱⁿᵛ².N)
-
-        push!(geomean, sum(DataFrame[!,:N] .* log.(DataFrame[!,:Dp_inv]))/sum(DataFrame[!, :N]))
+        push!(geomean, exp(sum(w .* log.(x))/sum(w)))
     end
 
     print(geomean)

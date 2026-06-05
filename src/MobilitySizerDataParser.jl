@@ -24,6 +24,8 @@ function parse_file(path::AbstractString)
         start_ts = DateTime(m.captures[1], "mm-dd-yyyy HH:MM:SS")
         stop_ts  = DateTime(m.captures[2], "mm-dd-yyyy HH:MM:SS")
 
+        avg_ts = start_ts + (stop_ts - start_ts) / 2
+
         i += 1
         block_id += 1
 
@@ -113,8 +115,8 @@ function parse_file(path::AbstractString)
         # p = plot(p1, p2, p3, layout = (1, 3), size=(1200, 400),  display=false);
 
         # savefig(p, joinpath(outdir, "plot_$(block_id).png"))
-        CSV.write(joinpath(outdir, "raw_$(block_id).csv"), experiment)
-        CSV.write(joinpath(outdir, "inverted_$(block_id).csv"), inverted)
+        CSV.write(joinpath(outdir, "raw_$(block_id)_$(avg_ts).csv"), experiment)
+        CSV.write(joinpath(outdir, "inverted_$(block_id)_$(avg_ts).csv"), inverted)
     end
 end
 

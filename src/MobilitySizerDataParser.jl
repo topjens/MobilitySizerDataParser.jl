@@ -125,7 +125,9 @@ function process_file(path::AbstractString)
     i = 1
     block_id = 0
 
+    ts = DateTime[]
     geomean = Float64[]
+    N = Float64[]
 
     while i <= length(lines)
         tsline = strip(lines[i])
@@ -197,12 +199,15 @@ function process_file(path::AbstractString)
         δ = setupSMPSdata(Λ, experiment[!,:V])
 
         w = (experiment,:Dp,:Rcn,δ) |> interpolateDataFrameOntoδ
-        x = rinv2(𝕣.N, δ, λ₁=0.1, λ₂=1.0)
+        x = rinv2(w.N, δ, λ₁=0.1, λ₂=1.0)
 
+        push!(ts, avg_ts)
         push!(geomean, exp(sum(w .* log.(x))/sum(w)))
+        push!(N, sum(w.N .* w.ΔlnD))
     end
 
-    print(geomean)
+    processed_data = DataFrame(t=ts, geomean=geomean, N=N)
+    CSV.write(joinpath(outdir, "processed_data.csv"), processed_data)
     
 end
 

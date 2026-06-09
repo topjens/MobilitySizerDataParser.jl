@@ -43,8 +43,8 @@ function parse_file(path::AbstractString)
         p = parse(Float64, vals[8]) * 100.0
         # 9
         t = parse(Float64, vals[10]) + 273.15
-        
-        
+
+
         leff = 0.0
         m = 6
         DMAtype = :cylindrical
@@ -159,8 +159,8 @@ function process_file(path::AbstractString)
         p = parse(Float64, vals[8]) * 100.0
         # 9
         t = parse(Float64, vals[10]) + 273.15
-        
-        
+
+
         leff = 13.0
         m = 6
         DMAtype = :cylindrical
@@ -198,17 +198,20 @@ function process_file(path::AbstractString)
         experiment[!,:Dp] = ztod(Λ, 1, vtoz(Λ, experiment[!,:V]))
         δ = setupSMPSdata(Λ, experiment[!,:V])
 
-        w = (experiment,:Dp,:Rcn,δ) |> interpolateDataFrameOntoδ
-        x = rinv2(w.N, δ, λ₁=0.1, λ₂=1.0)
+        𝕣 = (experiment,:Dp,:Rcn,δ) |> interpolateDataFrameOntoδ
+        𝕟ⁱⁿᵛ² = rinv2(𝕣.N, δ, λ₁=0.1, λ₂=1.0)
+        w = 𝕟ⁱⁿᵛ².N
+        x = 𝕟ⁱⁿᵛ².Dp
 
         push!(ts, avg_ts)
         push!(geomean, exp(sum(w .* log.(x))/sum(w)))
-        push!(N, sum(w.N .* w.ΔlnD))
+        print(sum(𝕟ⁱⁿᵛ².N .* 𝕟ⁱⁿᵛ².ΔlnD))
+        push!(N, sum(𝕟ⁱⁿᵛ².N .* 𝕟ⁱⁿᵛ².ΔlnD))
     end
 
     processed_data = DataFrame(t=ts, geomean=geomean, N=N)
     CSV.write(joinpath(outdir, "processed_data.csv"), processed_data)
-    
+
 end
 
 end

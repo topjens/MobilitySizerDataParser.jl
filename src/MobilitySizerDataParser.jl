@@ -127,7 +127,7 @@ function process_file(path::AbstractString)
 
     ts = DateTime[]
     geomean = Float64[]
-    N = Float64[]
+    N_total = Float64[]
 
     while i <= length(lines)
         tsline = strip(lines[i])
@@ -206,10 +206,10 @@ function process_file(path::AbstractString)
         push!(ts, avg_ts)
         push!(geomean, exp(sum(w .* log.(x))/sum(w)))
         print(sum(𝕟ⁱⁿᵛ².N .* 𝕟ⁱⁿᵛ².ΔlnD))
-        push!(N, sum(𝕟ⁱⁿᵛ².N .* 𝕟ⁱⁿᵛ².ΔlnD))
+        push!(N_total, sum(𝕟ⁱⁿᵛ².N .* 𝕟ⁱⁿᵛ².ΔlnD))
     end
 
-    processed_data = DataFrame(t=ts, geomean=geomean, N=N)
+    processed_data = DataFrame(t=ts, geomean=geomean, N=N_total)
     CSV.write(joinpath(outdir, "processed_data.csv"), processed_data)
 
 end

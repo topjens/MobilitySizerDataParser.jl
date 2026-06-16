@@ -7,6 +7,7 @@ using DifferentialMobilityAnalyzers
 using CSV
 
 export parse_file
+export process_file
 
 function parse_file(path::AbstractString)
     outdir = dirname(path)
